@@ -2,168 +2,158 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0866ff">
-<title>Meta Smart Glasses — Photo Converter</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Meta Glasses Converter</title>
 <style>
-  :root{
-    --bg:#f0f2f5;
-    --surface:#ffffff;
-    --surface-2:#f7f8fa;
-    --text:#050505;
-    --muted:#65676b;
-    --border:#ccd0d5;
-    --blue:#0866ff;
-    --blue-dark:#0756d8;
-    --blue-soft:#e7f3ff;
-    --success:#31a24c;
-    --shadow:0 2px 10px rgba(0,0,0,.10);
-    --radius:16px;
-  }
-  [data-theme="dark"]{
-    --bg:#18191a;
-    --surface:#242526;
-    --surface-2:#3a3b3c;
-    --text:#e4e6eb;
-    --muted:#b0b3b8;
-    --border:#3e4042;
-    --blue:#2d88ff;
-    --blue-dark:#1d73e8;
-    --blue-soft:#263951;
-    --shadow:0 2px 12px rgba(0,0,0,.35);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    min-height:100vh;
-    font-family:Arial,Helvetica,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    transition:background .2s,color .2s;
-  }
-  button,input{font:inherit}
-  .topbar{
-    height:60px;background:var(--surface);border-bottom:1px solid var(--border);
-    display:flex;align-items:center;justify-content:space-between;padding:0 22px;
-    position:sticky;top:0;z-index:10;
-  }
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700}
-  .meta-mark{
-    width:34px;height:22px;position:relative;display:inline-block;
-  }
-  .meta-mark:before,.meta-mark:after{
-    content:"";position:absolute;top:4px;width:15px;height:14px;
-    border:3px solid var(--blue);border-radius:50%;
-  }
-  .meta-mark:before{left:0;transform:skew(-15deg)}
-  .meta-mark:after{right:0;transform:skew(15deg)}
-  .brand span{font-size:17px}
-  .theme-btn{
-    border:1px solid var(--border);background:var(--surface-2);color:var(--text);
-    width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;
-  }
-  main{width:min(760px,calc(100% - 28px));margin:34px auto 50px}
-  .hero{text-align:center;margin-bottom:24px}
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;
-    background:var(--blue-soft);color:var(--blue);border:1px solid #b7d5ff;font-weight:700;font-size:14px;
-  }
-  h1{font-size:34px;margin:16px 0 8px;letter-spacing:-.7px}
-  .hero p{margin:0;color:var(--muted);font-size:16px;line-height:1.5}
-  .card{
-    background:var(--surface);border:1px solid var(--border);border-radius:18px;
-    padding:22px;box-shadow:var(--shadow);
-  }
-  .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-  .mode{
-    min-height:96px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
-    border-radius:14px;cursor:pointer;font-weight:700;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:8px;
-  }
-  .mode.active{border:2px solid var(--blue);background:var(--blue-soft);color:var(--blue)}
-  .mode .icon{font-size:27px;line-height:1}
-  .dropzone{
-    min-height:182px;border:2px dashed #8a8d91;border-radius:16px;background:var(--surface-2);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    cursor:pointer;padding:22px;transition:.15s;
-  }
-  .dropzone:hover,.dropzone.dragover{border-color:var(--blue);background:var(--blue-soft)}
-  .drop-icon{font-size:40px;margin-bottom:10px}
-  .drop-title{font-size:19px;font-weight:700}
-  .drop-sub{color:var(--muted);margin-top:6px}
-  #fileInput{display:none}
-  .preview-wrap{display:none;margin-top:16px;border:1px solid var(--border);border-radius:14px;padding:12px;background:var(--surface-2)}
-  .preview-wrap.show{display:block}
-  #preview{display:block;width:100%;max-height:330px;object-fit:contain;border-radius:10px;background:#111}
-  .file-info{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:var(--muted);font-size:13px}
-  .primary{
-    width:100%;margin-top:18px;border:0;border-radius:14px;background:var(--blue);color:white;
-    min-height:68px;font-size:20px;font-weight:800;cursor:pointer;
-  }
-  .primary:hover{background:var(--blue-dark)}
-  .primary:disabled{background:#8a8d91;cursor:not-allowed}
-  .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-  .secondary{
-    min-height:58px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2);
-    color:var(--text);font-weight:700;cursor:pointer;
-  }
-  .secondary:disabled{opacity:.45;cursor:not-allowed}
-  .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:15px}
-  .stat-label{font-size:13px;color:var(--muted);margin-bottom:5px}
-  .stat-value{font-weight:700}
-  .notice{text-align:center;color:var(--muted);font-size:13px;margin:20px 0 0}
-  .status{min-height:20px;text-align:center;margin-top:12px;color:var(--success);font-weight:600}
-  .settings{
-    margin-top:18px;border-top:1px solid var(--border);padding-top:18px;
-    display:grid;grid-template-columns:1fr 1fr;gap:12px;
-  }
-  .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-  .field select,.field input[type=text]{
-    width:100%;height:44px;border:1px solid var(--border);border-radius:10px;
-    background:var(--surface);color:var(--text);padding:0 10px;
-  }
-  .hidden{display:none!important}
-  @media(max-width:600px){
-    .topbar{padding:0 14px}
-    main{width:min(100% - 16px,760px);margin-top:20px}
-    .card{padding:14px}
-    h1{font-size:29px}
-    .settings,.stats{grid-template-columns:1fr}
-    .mode{min-height:88px}
-  }
+:root{
+  --bg:#f0f2f5;--card:#fff;--soft:#f7f8fa;--text:#050505;--muted:#65676b;
+  --line:#ccd0d5;--blue:#0866ff;--blue-hover:#075ee5;--blue-soft:#e7f3ff;
+  --danger:#e41e3f;--success:#31a24c;--shadow:0 2px 12px rgba(0,0,0,.10)
+}
+[data-theme=dark]{
+  --bg:#18191a;--card:#242526;--soft:#3a3b3c;--text:#e4e6eb;--muted:#b0b3b8;
+  --line:#3e4042;--blue:#4599ff;--blue-hover:#2f86f6;--blue-soft:#263951;
+  --danger:#ff5a73;--success:#45bd62;--shadow:0 2px 14px rgba(0,0,0,.35)
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}
+button{touch-action:manipulation}
+.topbar{
+  height:60px;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  position:sticky;top:0;z-index:20
+}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700}
+.meta-logo{width:34px;height:22px;position:relative;display:block}
+.meta-logo:before,.meta-logo:after{
+  content:"";position:absolute;top:3px;width:14px;height:14px;
+  border:3px solid var(--blue);border-radius:50%
+}
+.meta-logo:before{left:0;transform:skew(-12deg)}
+.meta-logo:after{right:0;transform:skew(12deg)}
+.theme{
+  width:40px;height:40px;border:1px solid var(--line);border-radius:50%;
+  background:var(--soft);color:var(--text);cursor:pointer
+}
+main{width:min(760px,calc(100% - 24px));margin:30px auto 50px}
+.hero{text-align:center;margin-bottom:22px}
+.badge{
+  display:inline-flex;align-items:center;padding:8px 13px;border:1px solid #b7d5ff;
+  border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:700;font-size:14px
+}
+h1{font-size:34px;line-height:1.1;margin:14px 0 8px;letter-spacing:-.7px}
+.hero p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  padding:20px;box-shadow:var(--shadow)
+}
+.sources{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.source{
+  min-height:96px;border:1px solid var(--line);border-radius:14px;background:var(--soft);
+  color:var(--text);cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;font-weight:700
+}
+.source:hover,.source.active{border:2px solid var(--blue);background:var(--blue-soft);color:var(--blue)}
+.source-icon{font-size:26px;line-height:1}
+.drop{
+  margin-top:18px;min-height:180px;border:2px dashed #8a8d91;border-radius:16px;
+  background:var(--soft);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;cursor:pointer;padding:20px;transition:.15s
+}
+.drop:hover,.drop.over{border-color:var(--blue);background:var(--blue-soft)}
+.drop-icon{font-size:38px;margin-bottom:8px}
+.drop-title{font-size:18px;font-weight:700}
+.drop-sub{margin-top:6px;color:var(--muted);font-size:14px}
+input[type=file]{display:none}
+.preview-box{display:none;margin-top:16px;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--soft)}
+.preview-box.show{display:block}
+.preview{
+  display:block;width:100%;max-height:380px;object-fit:contain;border-radius:10px;background:#111
+}
+.preview-meta{display:flex;justify-content:space-between;gap:10px;margin-top:9px;color:var(--muted);font-size:12px}
+.primary{
+  width:100%;min-height:64px;margin-top:16px;border:0;border-radius:13px;
+  background:var(--blue);color:#fff;font-weight:800;font-size:19px;cursor:pointer
+}
+.primary:hover{background:var(--blue-hover)}
+.primary:disabled{background:#8a8d91;cursor:not-allowed}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.secondary{
+  min-height:56px;border:1px solid var(--line);border-radius:13px;background:var(--soft);
+  color:var(--text);font-weight:700;cursor:pointer
+}
+.secondary:hover:not(:disabled){border-color:var(--blue)}
+.secondary:disabled{opacity:.45;cursor:not-allowed}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.field select,.field input[type=text]{
+  width:100%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:10px;
+  background:var(--card);color:var(--text);outline:none
+}
+.field select:focus,.field input[type=text]:focus{border-color:var(--blue)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.stat{padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--soft)}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+.stat-value{font-size:14px;font-weight:700}
+.status{
+  display:none;align-items:center;justify-content:center;gap:8px;text-align:center;
+  margin-top:14px;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:600
+}
+.status.show{display:flex}
+.status.success{background:#eaf7ed;color:var(--success)}
+.status.error{background:#ffebef;color:var(--danger)}
+.status.loading{background:var(--blue-soft);color:var(--blue)}
+[data-theme=dark] .status.success{background:#1f3525}
+[data-theme=dark] .status.error{background:#3a2027}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0 0}
+.spinner{width:16px;height:16px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){
+  .topbar{padding:0 14px}
+  main{width:calc(100% - 14px);margin-top:20px}
+  .card{padding:14px}
+  h1{font-size:29px}
+  .settings,.stats{grid-template-columns:1fr}
+  .sources{gap:8px}
+  .source{min-height:88px}
+  .primary{font-size:17px}
+}
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="meta-mark" aria-hidden="true"></span><span>Meta Smart Glasses</span></div>
-  <button class="theme-btn" id="themeBtn" title="Toggle bright/dark mode" aria-label="Toggle theme">☾</button>
+  <div class="brand"><span class="meta-logo" aria-hidden="true"></span><span>Meta Smart Glasses</span></div>
+  <button class="theme" id="themeBtn" aria-label="Toggle dark mode">☾</button>
 </header>
 
 <main>
   <section class="hero">
-    <div class="eyebrow">⌁ Ray-Ban Meta Smart Glasses</div>
+    <div class="badge">🕶️ Ray-Ban Meta Smart Glasses</div>
     <h1>Photo Converter</h1>
-    <p>One-tap JPEG conversion, Meta-style EXIF injection, Base64 and direct photo save.</p>
+    <p>1-Tap 3024 × 4032 JPEG conversion, Meta-style EXIF, Base64 and direct save.</p>
   </section>
 
   <section class="card">
-    <div class="mode-grid">
-      <button class="mode active" id="cameraMode"><span class="icon">📷</span><span>Take Photo</span></button>
-      <button class="mode" id="libraryMode"><span class="icon">🖼️</span><span>Photo Library</span></button>
+    <div class="sources">
+      <button class="source active" id="cameraBtn"><span class="source-icon">📷</span><span>Take Photo</span></button>
+      <button class="source" id="galleryBtn"><span class="source-icon">🖼️</span><span>Photo Library</span></button>
     </div>
 
-    <label class="dropzone" id="dropzone" for="fileInput">
+    <div class="drop" id="dropZone">
       <div class="drop-icon">⚡</div>
-      <div class="drop-title">Tap to select photo</div>
-      <div class="drop-sub">Supports JPG / JPEG photos</div>
-    </label>
-    <input id="fileInput" type="file" accept="image/jpeg,image/jpg" capture="environment">
+      <div class="drop-title" id="uploadTitle">Tap to select photo</div>
+      <div class="drop-sub" id="uploadSub">Supports JPG / JPEG photos</div>
+    </div>
 
-    <div class="preview-wrap" id="previewWrap">
-      <img id="preview" alt="Selected photo preview">
-      <div class="file-info">
-        <span id="fileName">No file</span>
+    <input id="galleryInput" type="file" accept="image/jpeg,.jpg,.jpeg">
+    <input id="cameraInput" type="file" accept="image/jpeg,.jpg,.jpeg" capture="environment">
+
+    <div class="preview-box" id="previewBox">
+      <img id="preview" class="preview" alt="Selected photo preview">
+      <div class="preview-meta">
+        <span id="fileName">No file selected</span>
         <span id="fileSize">0 KB</span>
       </div>
     </div>
@@ -177,259 +167,465 @@
 
     <div class="settings">
       <div class="field">
-        <label for="cameraModel">EXIF camera model</label>
-        <select id="cameraModel">
-          <option>Ray-Ban Meta 2</option>
-          <option>Ray-Ban Meta</option>
-          <option>Meta View Camera</option>
+        <label for="model">EXIF camera model</label>
+        <select id="model">
+          <option>Ray-Ban Meta Smart Glasses 2</option>
+          <option>Ray-Ban Meta Smart Glasses</option>
         </select>
       </div>
       <div class="field">
-        <label for="software">Software tag</label>
+        <label for="software">Software</label>
         <input id="software" type="text" value="Meta Smart Glasses">
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat">
-        <div class="stat-label">Resolution</div>
-        <div class="stat-value" id="resolution">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Meta EXIF</div>
-        <div class="stat-value" id="exifStatus">Ready</div>
-      </div>
+      <div class="stat"><div class="stat-label">Resolution</div><div class="stat-value" id="resolution">—</div></div>
+      <div class="stat"><div class="stat-label">Meta EXIF</div><div class="stat-value" id="exifState">Ready</div></div>
     </div>
 
     <div class="status" id="status"></div>
-    <p class="notice">🔒 100% Client-Side. Photos are processed strictly on your device.</p>
+    <p class="footer">🔒 100% client-side. Photos stay on your device.</p>
   </section>
 </main>
 
 <script>
-(() => {
-  const $ = id => document.getElementById(id);
-  const fileInput = $("fileInput"), dropzone = $("dropzone");
-  const preview = $("preview"), previewWrap = $("previewWrap");
-  const convertBtn = $("convertBtn"), copyBtn = $("copyBtn"), saveBtn = $("saveBtn");
-  const status = $("status"), resolution = $("resolution"), exifStatus = $("exifStatus");
-  let selectedFile = null, convertedBlob = null, base64 = "", previewURL = "";
+"use strict";
 
-  // Theme
-  const savedTheme = localStorage.getItem("metaPhotoTheme");
-  if (savedTheme) document.documentElement.dataset.theme = savedTheme;
-  updateThemeIcon();
-  $("themeBtn").onclick = () => {
-    const dark = document.documentElement.dataset.theme === "dark";
-    document.documentElement.dataset.theme = dark ? "light" : "dark";
-    localStorage.setItem("metaPhotoTheme", document.documentElement.dataset.theme);
-    updateThemeIcon();
-  };
-  function updateThemeIcon(){
-    $("themeBtn").textContent = document.documentElement.dataset.theme === "dark" ? "☀" : "☾";
-  }
+const $ = id => document.getElementById(id);
+const TARGET_W = 3024, TARGET_H = 4032;
 
-  // Camera / library modes
-  $("cameraMode").onclick = () => {
-    $("cameraMode").classList.add("active");
-    $("libraryMode").classList.remove("active");
-    fileInput.setAttribute("capture","environment");
-    fileInput.click();
-  };
-  $("libraryMode").onclick = () => {
-    $("libraryMode").classList.add("active");
-    $("cameraMode").classList.remove("active");
-    fileInput.removeAttribute("capture");
-    fileInput.click();
-  };
+let selectedFile = null;
+let sourceUrl = "";
+let resultBlob = null;
+let resultBase64 = "";
+let previewUrl = "";
 
-  dropzone.onclick = () => fileInput.click();
-  ["dragenter","dragover"].forEach(e => dropzone.addEventListener(e, ev => {
-    ev.preventDefault(); dropzone.classList.add("dragover");
-  }));
-  ["dragleave","drop"].forEach(e => dropzone.addEventListener(e, ev => {
-    ev.preventDefault(); dropzone.classList.remove("dragover");
-  }));
-  dropzone.addEventListener("drop", ev => {
-    const file = ev.dataTransfer.files[0];
-    if (file) loadFile(file);
-  });
-  fileInput.onchange = e => {
-    if (e.target.files[0]) loadFile(e.target.files[0]);
-  };
-
-  function loadFile(file){
-    if (!/^image\/jpe?g$/i.test(file.type) && !/\.jpe?g$/i.test(file.name)){
-      setStatus("Please choose a JPG/JPEG image.", true); return;
-    }
-    selectedFile = file;
-    convertedBlob = null; base64 = "";
-    if (previewURL) URL.revokeObjectURL(previewURL);
-    previewURL = URL.createObjectURL(file);
-    preview.src = previewURL;
-    previewWrap.classList.add("show");
-    $("fileName").textContent = file.name;
-    $("fileSize").textContent = formatBytes(file.size);
-    const img = new Image();
-    img.onload = () => {
-      resolution.textContent = `${img.naturalWidth} × ${img.naturalHeight} px`;
-    };
-    img.src = previewURL;
-    convertBtn.disabled = false;
-    copyBtn.disabled = true; saveBtn.disabled = true;
-    exifStatus.textContent = "Ready to inject";
-    setStatus("Photo selected.");
-  }
-
-  convertBtn.onclick = async () => {
-    if (!selectedFile) return;
-    convertBtn.disabled = true;
-    setStatus("Converting locally…");
-    try {
-      const bytes = new Uint8Array(await selectedFile.arrayBuffer());
-      const exif = buildExifSegment($("cameraModel").value, $("software").value);
-      convertedBlob = injectExif(bytes, exif);
-      base64 = await blobToDataURL(convertedBlob);
-      copyBtn.disabled = false; saveBtn.disabled = false;
-      exifStatus.textContent = "Injected";
-      setStatus("Conversion complete. JPEG + EXIF ready.");
-    } catch (err) {
-      console.error(err);
-      setStatus("Could not convert this image.", true);
-    } finally {
-      convertBtn.disabled = false;
-    }
-  };
-
-  copyBtn.onclick = async () => {
-    if (!base64) return;
-    try {
-      await navigator.clipboard.writeText(base64);
-      setStatus("Base64 copied to clipboard.");
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = base64; document.body.appendChild(ta); ta.select();
-      document.execCommand("copy"); ta.remove();
-      setStatus("Base64 copied to clipboard.");
-    }
-  };
-
-  saveBtn.onclick = async () => {
-    if (!convertedBlob) return;
-    const filename = makeName(selectedFile.name);
-    const file = new File([convertedBlob], filename, {type:"image/jpeg"});
-    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
-      try { await navigator.share({title:"Meta Photo", files:[file]}); setStatus("Share sheet opened."); return; } catch {}
-    }
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(convertedBlob); a.download = filename;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    setStatus("JPEG saved.");
-  };
-
-  function makeName(name){
-    return name.replace(/\.(jpe?g)$/i,"") + "_meta.jpg";
-  }
-  function formatBytes(n){
-    if(n < 1024) return n + " B";
-    if(n < 1024*1024) return (n/1024).toFixed(1)+" KB";
-    return (n/1024/1024).toFixed(2)+" MB";
-  }
-  function setStatus(msg, error=false){
-    status.textContent = msg;
-    status.style.color = error ? "#f02849" : "var(--success)";
-  }
-  function blobToDataURL(blob){
-    return new Promise((resolve,reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(blob);
-    });
-  }
-
-  /*
-    Creates a small valid EXIF APP1 block containing:
-    Make = Meta
-    Model = selected Ray-Ban Meta model
-    Software = selected software string
-  */
-  function buildExifSegment(model, software){
-    const enc = new TextEncoder();
-    const ascii = s => enc.encode(String(s).replace(/[^\x20-\x7E]/g,""));
-    const make = ascii("Meta");
-    const mod = ascii(model);
-    const soft = ascii(software || "Meta Smart Glasses");
-
-    // TIFF header + 0th IFD. 3 ASCII entries: Make, Model, Software.
-    const entryCount = 3;
-    const dataOffset = 8 + 2 + entryCount*12 + 4;
-    const makeOff = dataOffset;
-    const modelOff = makeOff + make.length + 1;
-    const softOff = modelOff + mod.length + 1;
-    const tiffLen = softOff + soft.length + 1;
-    const out = new Uint8Array(6 + tiffLen);
-    out.set([0x45,0x78,0x69,0x66,0x00,0x00],0); // Exif\0\0
-    const dv = new DataView(out.buffer);
-    let p=6;
-    out.set([0x49,0x49,0x2A,0x00],p); p+=4;
-    dv.setUint32(p,8,true); p+=4;
-    dv.setUint16(p,entryCount,true); p+=2;
-
-    const entry = (tag, offset, len) => {
-      dv.setUint16(p,tag,true); p+=2;
-      dv.setUint16(p,2,true); p+=2; // ASCII
-      dv.setUint32(p,len,true); p+=4;
-      dv.setUint32(p,offset,true); p+=4;
-    };
-    entry(0x010F,makeOff,make.length+1);
-    entry(0x0110,modelOff,mod.length+1);
-    entry(0x0131,softOff,soft.length+1);
-    dv.setUint32(p,0,true);
-
-    out.set(make,6+makeOff); out[6+makeOff+make.length]=0;
-    out.set(mod,6+modelOff); out[6+modelOff+mod.length]=0;
-    out.set(soft,6+softOff); out[6+softOff+soft.length]=0;
-
-    // APP1 marker + segment length.
-    const seg = new Uint8Array(2 + 2 + out.length);
-    seg.set([0xFF,0xE1],0);
-    const len = out.length + 2;
-    seg[2] = (len >> 8) & 255; seg[3] = len & 255;
-    seg.set(out,4);
-    return seg;
-  }
-
-  function injectExif(jpeg, exifSegment){
-    // JPEG SOI must be first. Remove an existing EXIF APP1 to avoid duplicates.
-    if(jpeg[0] !== 0xFF || jpeg[1] !== 0xD8) throw new Error("Not a JPEG");
-    const chunks = [jpeg.slice(0,2)];
-    let pos = 2, inserted = false;
-    while(pos < jpeg.length){
-      if(jpeg[pos] !== 0xFF) break;
-      const marker = jpeg[pos+1];
-      if(marker === 0xDA || marker === 0xD9){ // SOS / EOI
-        if(!inserted){ chunks.push(exifSegment); inserted=true; }
-        chunks.push(jpeg.slice(pos)); return new Blob(chunks,{type:"image/jpeg"});
-      }
-      if(marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)){
-        chunks.push(jpeg.slice(pos,pos+2)); pos += 2; continue;
-      }
-      if(pos+4 > jpeg.length) break;
-      const len = (jpeg[pos+2]<<8) | jpeg[pos+3];
-      if(len < 2 || pos+2+len > jpeg.length) break;
-      const isExif = marker === 0xE1 &&
-        jpeg[pos+4]===0x45 && jpeg[pos+5]===0x78 && jpeg[pos+6]===0x69 &&
-        jpeg[pos+7]===0x66;
-      if(!isExif) chunks.push(jpeg.slice(pos,pos+2+len));
-      pos += 2+len;
-    }
-    if(!inserted) chunks.push(exifSegment);
-    chunks.push(jpeg.slice(pos));
-    return new Blob(chunks,{type:"image/jpeg"});
-  }
+/* ---------- Theme ---------- */
+(function initTheme(){
+  const saved = localStorage.getItem("meta-theme");
+  if(saved === "dark") document.documentElement.dataset.theme = "dark";
+  updateThemeButton();
 })();
+$("themeBtn").addEventListener("click", () => {
+  const dark = document.documentElement.dataset.theme === "dark";
+  if(dark) delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = "dark";
+  localStorage.setItem("meta-theme", dark ? "light" : "dark");
+  updateThemeButton();
+});
+function updateThemeButton(){
+  $("themeBtn").textContent = document.documentElement.dataset.theme === "dark" ? "☀" : "☾";
+}
+
+/* ---------- Source buttons ---------- */
+$("cameraBtn").addEventListener("click", () => {
+  setActiveSource("camera");
+  $("cameraInput").click();
+});
+$("galleryBtn").addEventListener("click", () => {
+  setActiveSource("gallery");
+  $("galleryInput").click();
+});
+function setActiveSource(type){
+  $("cameraBtn").classList.toggle("active", type === "camera");
+  $("galleryBtn").classList.toggle("active", type === "gallery");
+}
+
+/* ---------- File selection ---------- */
+$("dropZone").addEventListener("click", () => $("galleryInput").click());
+
+["dragenter","dragover"].forEach(type => $("dropZone").addEventListener(type, e => {
+  e.preventDefault();
+  $("dropZone").classList.add("over");
+}));
+["dragleave","drop"].forEach(type => $("dropZone").addEventListener(type, e => {
+  e.preventDefault();
+  $("dropZone").classList.remove("over");
+}));
+$("dropZone").addEventListener("drop", e => {
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(file) handleFile(file);
+});
+$("galleryInput").addEventListener("change", e => {
+  if(e.target.files[0]) handleFile(e.target.files[0]);
+});
+$("cameraInput").addEventListener("change", e => {
+  if(e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+function handleFile(file){
+  if(!isJpeg(file)){
+    showStatus("Please select a JPG/JPEG image.", "error");
+    return;
+  }
+
+  selectedFile = file;
+  resultBlob = null;
+  resultBase64 = "";
+
+  if(previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = URL.createObjectURL(file);
+  $("preview").src = previewUrl;
+  $("previewBox").classList.add("show");
+  $("fileName").textContent = file.name || "Photo";
+  $("fileSize").textContent = formatBytes(file.size);
+  $("uploadTitle").textContent = file.name || "Photo selected";
+  $("uploadSub").textContent = "Ready to convert";
+
+  $("convertBtn").disabled = false;
+  $("copyBtn").disabled = true;
+  $("saveBtn").disabled = true;
+  $("exifState").textContent = "Ready";
+  setResolutionFromFile(file);
+  showStatus("Photo selected.", "success");
+}
+function isJpeg(file){
+  return file.type === "image/jpeg" || /\.(jpe?g)$/i.test(file.name || "");
+}
+function formatBytes(bytes){
+  if(bytes < 1024) return bytes + " B";
+  if(bytes < 1048576) return (bytes/1024).toFixed(1) + " KB";
+  return (bytes/1048576).toFixed(2) + " MB";
+}
+function setResolutionFromFile(file){
+  const img = new Image();
+  img.onload = () => $("resolution").textContent = `${img.naturalWidth} × ${img.naturalHeight} px`;
+  img.onerror = () => $("resolution").textContent = "—";
+  img.src = previewUrl;
+}
+
+/* ---------- Conversion ---------- */
+$("convertBtn").addEventListener("click", async () => {
+  if(!selectedFile) return;
+
+  $("convertBtn").disabled = true;
+  showStatus("Processing 3024 × 4032 JPEG…", "loading", true);
+
+  try{
+    const orientation = await readExifOrientation(selectedFile);
+    const jpegBytes = await renderJpeg(selectedFile, orientation);
+    const exif = buildExifSegment({
+      make: "Meta",
+      model: $("model").value,
+      software: $("software").value || "Meta Smart Glasses",
+      width: TARGET_W,
+      height: TARGET_H
+    });
+
+    resultBlob = injectExif(jpegBytes, exif);
+    resultBase64 = await blobToBase64(resultBlob);
+
+    $("preview").src = URL.createObjectURL(resultBlob);
+    $("resolution").textContent = `${TARGET_W} × ${TARGET_H} px`;
+    $("exifState").textContent = "Injected";
+    $("copyBtn").disabled = false;
+    $("saveBtn").disabled = false;
+
+    showStatus("Conversion complete. JPEG, EXIF and Base64 are ready.", "success");
+  }catch(err){
+    console.error(err);
+    showStatus("Conversion failed. Try another JPG.", "error");
+  }finally{
+    $("convertBtn").disabled = false;
+  }
+});
+
+/*
+  Render to exactly 3024 × 4032.
+  The source is center-cropped instead of stretched, preserving its proportions.
+*/
+async function renderJpeg(file, orientation){
+  const bitmap = await createImageBitmap(file, {imageOrientation:"none"});
+  const srcW = bitmap.width, srcH = bitmap.height;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = TARGET_W;
+  canvas.height = TARGET_H;
+  const ctx = canvas.getContext("2d", {alpha:false});
+  if(!ctx) throw new Error("Canvas unavailable");
+
+  const rotated = orientation >= 5 && orientation <= 8;
+  const orientedW = rotated ? srcH : srcW;
+  const orientedH = rotated ? srcW : srcH;
+
+  const scale = Math.max(TARGET_W / orientedW, TARGET_H / orientedH);
+  const drawW = orientedW * scale;
+  const drawH = orientedH * scale;
+  const x = (TARGET_W - drawW) / 2;
+  const y = (TARGET_H - drawH) / 2;
+
+  ctx.save();
+  ctx.translate(TARGET_W/2, TARGET_H/2);
+  applyOrientation(ctx, orientation, srcW, srcH);
+  ctx.translate(-srcW/2, -srcH/2);
+
+  // Crop is calculated in the final oriented coordinate system.
+  // Drawing centered after transform gives the expected 3:4 output.
+  ctx.restore();
+
+  // Reliable orientation/crop path using a temporary oriented canvas.
+  const temp = document.createElement("canvas");
+  temp.width = orientedW;
+  temp.height = orientedH;
+  const t = temp.getContext("2d", {alpha:false});
+  if(!t) throw new Error("Canvas unavailable");
+  applyOrientation(t, orientation, srcW, srcH);
+  drawBitmap(t, bitmap, srcW, srcH);
+  bitmap.close();
+
+  const cover = Math.max(TARGET_W/orientedW, TARGET_H/orientedH);
+  const cropW = TARGET_W / cover;
+  const cropH = TARGET_H / cover;
+  const sx = (orientedW - cropW)/2;
+  const sy = (orientedH - cropH)/2;
+  ctx.drawImage(temp, sx, sy, cropW, cropH, 0, 0, TARGET_W, TARGET_H);
+
+  return new Promise((resolve,reject) => {
+    canvas.toBlob(blob => {
+      if(blob) blob.arrayBuffer().then(resolve).catch(reject);
+      else reject(new Error("JPEG encoding failed"));
+    }, "image/jpeg", .95);
+  });
+}
+
+function drawBitmap(ctx, bitmap, w, h){
+  ctx.drawImage(bitmap, 0, 0, w, h);
+}
+
+function applyOrientation(ctx, o, w, h){
+  switch(o){
+    case 2: ctx.translate(w,0); ctx.scale(-1,1); break;
+    case 3: ctx.translate(w,h); ctx.rotate(Math.PI); break;
+    case 4: ctx.translate(0,h); ctx.scale(1,-1); break;
+    case 5: ctx.rotate(.5*Math.PI); ctx.scale(1,-1); break;
+    case 6: ctx.translate(h,0); ctx.rotate(.5*Math.PI); break;
+    case 7: ctx.translate(h,w); ctx.rotate(.5*Math.PI); ctx.scale(-1,1); break;
+    case 8: ctx.translate(0,w); ctx.rotate(-.5*Math.PI); break;
+  }
+}
+
+/* ---------- EXIF orientation reader ---------- */
+async function readExifOrientation(file){
+  const buf = await file.arrayBuffer();
+  const b = new Uint8Array(buf);
+  if(b[0] !== 0xFF || b[1] !== 0xD8) return 1;
+
+  let p = 2;
+  while(p + 4 < b.length){
+    if(b[p] !== 0xFF) { p++; continue; }
+    const marker = b[p+1];
+    if(marker === 0xDA || marker === 0xD9) break;
+    if(marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)){
+      p += 2; continue;
+    }
+    const len = (b[p+2] << 8) | b[p+3];
+    if(len < 2 || p + 2 + len > b.length) break;
+
+    if(marker === 0xE1 &&
+       b[p+4]===0x45 && b[p+5]===0x78 && b[p+6]===0x69 && b[p+7]===0x66){
+      const tiff = p + 10;
+      const little = b[tiff]===0x49 && b[tiff+1]===0x49;
+      const u16 = q => little ? (b[q] | (b[q+1]<<8)) : ((b[q]<<8)|b[q+1]);
+      const u32 = q => little
+        ? (b[q] | (b[q+1]<<8) | (b[q+2]<<16) | (b[q+3]<<24)) >>> 0
+        : (((b[q]<<24)>>>0) | (b[q+1]<<16) | (b[q+2]<<8) | b[q+3]) >>> 0;
+
+      if((little || (b[tiff]===0x4D && b[tiff+1]===0x4D)) && u16(tiff+2)===42){
+        const ifd = tiff + u32(tiff+4);
+        const count = u16(ifd);
+        for(let i=0;i<count;i++){
+          const e = ifd + 2 + i*12;
+          if(u16(e) === 0x0112) return u16(e+8) || 1;
+        }
+      }
+    }
+    p += 2 + len;
+  }
+  return 1;
+}
+
+/* ---------- Minimal valid EXIF writer ---------- */
+function buildExifSegment({make,model,software,width,height}){
+  const encoder = new TextEncoder();
+  const clean = s => String(s).replace(/[^\x20-\x7E]/g,"");
+  const a = s => encoder.encode(clean(s) + "\0");
+
+  const makeB = a(make), modelB = a(model), softwareB = a(software);
+  const exifIfdOffset = 8 + 2 + 4*12 + 4;
+  const dataStart = exifIfdOffset + 2 + 2*12 + 4;
+
+  const makeOff = dataStart;
+  const modelOff = makeOff + makeB.length;
+  const softwareOff = modelOff + modelB.length;
+  const tiffSize = softwareOff + softwareB.length;
+
+  const exif = new Uint8Array(6 + tiffSize);
+  exif.set([0x45,0x78,0x69,0x66,0,0],0);
+  const dv = new DataView(exif.buffer);
+
+  let p = 6;
+  exif.set([0x49,0x49,0x2A,0x00],p); p += 4;
+  dv.setUint32(p,8,true); p += 4;
+
+  // 0th IFD: Make, Model, Orientation, Software
+  dv.setUint16(p,4,true); p += 2;
+  writeAsciiEntry(dv,exif,p,0x010F,makeB,makeOff); p+=12;
+  writeAsciiEntry(dv,exif,p,0x0110,modelB,modelOff); p+=12;
+  writeShortEntry(dv,p,0x0112,1); p+=12;
+  writeAsciiEntry(dv,exif,p,0x0131,softwareB,softwareOff); p+=12;
+  dv.setUint32(p,exifIfdOffset,true);
+
+  // Exif IFD
+  p = 6 + exifIfdOffset;
+  dv.setUint16(p,2,true); p+=2;
+  writeLongEntry(dv,p,0xA002,width); p+=12;
+  writeLongEntry(dv,p,0xA003,height); p+=12;
+  dv.setUint32(p,0,true);
+
+  exif.set(makeB,6+makeOff);
+  exif.set(modelB,6+modelOff);
+  exif.set(softwareB,6+softwareOff);
+
+  const segment = new Uint8Array(4 + exif.length);
+  segment[0]=0xFF; segment[1]=0xE1;
+  const length = exif.length + 2;
+  segment[2]=(length >> 8) & 255;
+  segment[3]=length & 255;
+  segment.set(exif,4);
+  return segment;
+}
+function writeAsciiEntry(dv,buf,p,tag,data,offset){
+  dv.setUint16(p,tag,true); dv.setUint16(p+2,2,true);
+  dv.setUint32(p+4,data.length,true); dv.setUint32(p+8,offset,true);
+}
+function writeShortEntry(dv,p,tag,value){
+  dv.setUint16(p,tag,true); dv.setUint16(p+2,3,true);
+  dv.setUint32(p+4,1,true); dv.setUint16(p+8,value,true); dv.setUint16(p+10,0,true);
+}
+function writeLongEntry(dv,p,tag,value){
+  dv.setUint16(p,tag,true); dv.setUint16(p+2,4,true);
+  dv.setUint32(p+4,1,true); dv.setUint32(p+8,value,true);
+}
+
+/* ---------- Inject/replace EXIF APP1 ---------- */
+function injectExif(jpegBytes, exifSegment){
+  const b = jpegBytes instanceof Uint8Array ? jpegBytes : new Uint8Array(jpegBytes);
+  if(b[0]!==0xFF || b[1]!==0xD8) throw new Error("Invalid JPEG");
+
+  const parts = [b.slice(0,2)];
+  let p = 2, inserted = false;
+
+  while(p < b.length - 1){
+    if(b[p] !== 0xFF) break;
+    const marker = b[p+1];
+
+    if(marker === 0xDA || marker === 0xD9){
+      if(!inserted){ parts.push(exifSegment); inserted = true; }
+      parts.push(b.slice(p));
+      return new Blob(parts,{type:"image/jpeg"});
+    }
+
+    if(marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)){
+      parts.push(b.slice(p,p+2));
+      p += 2;
+      continue;
+    }
+
+    if(p+4 > b.length) break;
+    const len = (b[p+2]<<8)|b[p+3];
+    if(len < 2 || p+2+len > b.length) break;
+
+    const isExif = marker===0xE1 &&
+      b[p+4]===0x45 && b[p+5]===0x78 && b[p+6]===0x69 && b[p+7]===0x66;
+
+    if(!isExif) parts.push(b.slice(p,p+2+len));
+    p += 2 + len;
+  }
+
+  if(!inserted) parts.push(exifSegment);
+  parts.push(b.slice(p));
+  return new Blob(parts,{type:"image/jpeg"});
+}
+
+/* ---------- Base64 / save / share ---------- */
+function blobToBase64(blob){
+  return new Promise((resolve,reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+$("copyBtn").addEventListener("click", async () => {
+  if(!resultBase64) return;
+  try{
+    await copyText(resultBase64);
+    showStatus("Base64 copied to clipboard.", "success");
+  }catch{
+    showStatus("Clipboard access is blocked by this browser.", "error");
+  }
+});
+
+async function copyText(text){
+  if(navigator.clipboard && window.isSecureContext){
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  const ok = document.execCommand("copy");
+  ta.remove();
+  if(!ok) throw new Error("Copy failed");
+}
+
+$("saveBtn").addEventListener("click", () => saveOrShare());
+
+async function saveOrShare(){
+  if(!resultBlob) return;
+  const file = new File([resultBlob],"meta-glasses-converted.jpg",{type:"image/jpeg"});
+
+  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+    try{
+      await navigator.share({
+        title:"Meta Glasses Photo",
+        text:"Converted 3024 × 4032 JPEG",
+        files:[file]
+      });
+      showStatus("Share sheet opened.", "success");
+      return;
+    }catch(err){
+      if(err && err.name === "AbortError") return;
+    }
+  }
+
+  const url = URL.createObjectURL(resultBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "meta-glasses-converted.jpg";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  showStatus("JPEG download started.", "success");
+}
+
+/* ---------- Status ---------- */
+function showStatus(message,type="success",loading=false){
+  const el = $("status");
+  el.className = `status show ${type}`;
+  el.innerHTML = loading
+    ? `<span class="spinner"></span><span>${escapeHtml(message)}</span>`
+    : `<span>${type==="success"?"✓":"!"}</span><span>${escapeHtml(message)}</span>`;
+}
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 </script>
 </body>
 </html>
